@@ -17,7 +17,7 @@ class Animator {
     private float amplitudeX;
     private float amplitudeY;
     private float frame;
-    private float speed = 0.04;
+    private float speed;
     private float duration;
 
     void newAnimation(float startX, float startY, float endX, float endY, float duration) {
@@ -57,7 +57,7 @@ class Animator {
     }
 
     private float cosine(float time, float frequency, float amplitude) {
-        return cos(time * frequency) * amplitude;
+        return cos(time * frequency + PI) * amplitude;
     }
 
     private float arctan(float time, float frequency, float amplitude) {
@@ -65,7 +65,7 @@ class Animator {
     }
 
     private float sigmoid(float time, float frequency, float amplitude) {
-        return (amplitude - cosine(time, frequency, amplitude)) + 1;
+        return (cosine(time + PI, frequency / 2, 1) + 1) * amplitude / 2;
     }
 
 }
