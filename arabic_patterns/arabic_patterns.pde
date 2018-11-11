@@ -1,23 +1,21 @@
 
 int backgroundColor = 50;
 int lineColor = 200;
-int lineSize = 2;
+float lineSize = 2;
 Animator anim = new Animator();
+Point dot;
 
 void setup() {
     size(640, 480);
     smooth();
     background(backgroundColor);
-    anim.x = -PI / 2;
-    anim.targetX = TWO_PI;
+
+    dot = new Point(lineColor, 5, 100, 100);
+    dot.newAnimation(100, 100, 200, 200);
 }
 
 void draw() {
     background(backgroundColor);
-
-    anim.move();
-    stroke(lineColor);
-    strokeWeight(lineSize);
-    noFill();
-    arc(300, 200, 150, 150, 0, anim.x);
+    dot.move();
+    dot.display();
 }

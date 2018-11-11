@@ -17,62 +17,128 @@ public class arabic_patterns extends PApplet {
 
 int backgroundColor = 50;
 int lineColor = 200;
-int lineSize = 2;
+float lineSize = 2;
 Animator anim = new Animator();
+Point dot;
 
 public void setup() {
     
     
     background(backgroundColor);
-    anim.x = -PI / 2;
-    anim.targetX = TWO_PI;
+
+    dot = new Point(lineColor, 5, 100, 100);
+    dot.newAnimation(100, 100, 200, 200);
 }
 
 public void draw() {
     background(backgroundColor);
-
-    anim.move();
-    stroke(lineColor);
-    strokeWeight(lineSize);
-    noFill();
-    arc(300, 200, 150, 150, 0, anim.x);
+    dot.move();
+    dot.display();
 }
 class Animator {
     // Position
-    float x = 500;
-    float y = 300;
-    float targetX = 200;
-    float targetY = 200;
-    float dx;
-    float dy;
+    protected float x;
+    protected float y;
+    float startX = 100;
+    float startY = 100;
+    float endX = 300;
+    float endY = 30;
 
     // Stroke
-    float lineSize = 0;
+    private float lineSize = 0;
     float maxLineSize = 10;
 
     // Animation parameters
     float easing = 0.12f;
     float blinkingRate = 0.1f;
+    private float amplitudeX;
+    private float amplitudeY;
+    float speed = 0.04f;
 
-    public void move() {
-        dx = targetX - x;
-        x += dx * easing;
-        dy = targetY - y;
-        y += dy * easing;
+    public void newAnimation(float startX, float startY, float endX, float endY) {
+        this.startX = startX;
+        this.startY = startY;
+        this.endX = endX;
+        this.endY = endY;
+        this.x = startX;
+        this.y = startY;
+        amplitudeX = (endX - startX);
+        amplitudeY = (endY - startY);
+    }
+
+    /*
+        A sigmoid animation (ease in - ease out) for x and y
+    */
+    public boolean anim() {
+        if (abs(endX - x) > 0.3f) {
+            x = arctan(frameCount, speed, amplitudeX) + startX;
+        } else {
+            return false;
+        }
+
+        if (abs(endY - y) > 0.3f) {
+            y = arctan(frameCount, speed, amplitudeY) + startY;
+        } else {
+            return false;
+        }
+        return true;
     }
 
     public void blink() {
         lineSize = abs(sine(frameCount, blinkingRate, maxLineSize));
     }
 
-    public float sine(float time, float frequency, float amplitude) {
+    private float sine(float time, float frequency, float amplitude) {
         return sin(time * frequency) * amplitude;
     }
 
-    public float cosine(float time, float frequency, float amplitude) {
+    private float cosine(float time, float frequency, float amplitude) {
         return cos(time * frequency) * amplitude;
     }
 
+    private float arctan(float time, float frequency, float amplitude) {
+        return atan(time * frequency) * amplitude;
+    }
+
+}
+abstract class Figure  extends Animator {
+    int lineColor;
+    float lineSize;
+    float locationX;
+    float locationY;
+
+    Figure(int lineColor, float lineSize, float locationX, float locationY) {
+        this.lineColor = lineColor;
+        this.lineSize = lineSize;
+        this.locationX = locationX;
+        this.locationY = locationY;
+    }
+
+    public boolean move() {
+        boolean moving = anim();
+        if (moving) {
+            locationX = x;
+            locationY = y;
+        }
+        return moving;
+    }
+
+    public abstract void display();
+}
+class Point extends Figure {
+
+    Point(int lineColor, float lineSize, float locationX, float locationY) {
+        super(lineColor, lineSize, locationX,  locationY);
+    }
+
+    public void display() {
+        pushMatrix();
+        translate(locationX, locationY);
+        stroke(lineColor);
+        strokeWeight(lineSize);
+        point(0, 0);
+        popMatrix();
+    }
 }
 class Polygon {
     PShape s;
