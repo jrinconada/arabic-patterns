@@ -7,6 +7,7 @@ class Point extends Figure {
     void display() {
         pushMatrix();
         translate(locationX, locationY);
+        println(locationX);
         stroke(lineColor);
         strokeWeight(lineSize);
         point(0, 0);

@@ -20,5 +20,10 @@ abstract class Figure  extends Animator {
         return moving;
     }
 
+    void blink() {
+        resize();
+        lineSize = lineAnimSize;
+    }
+
     abstract void display();
 }

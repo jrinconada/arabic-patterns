@@ -18,22 +18,40 @@ public class arabic_patterns extends PApplet {
 int backgroundColor = 50;
 int lineColor = 200;
 float lineSize = 2;
-Animator anim = new Animator();
+
+int step = 0;
+
 Point dot;
 
 public void setup() {
     
     
     background(backgroundColor);
-
-    dot = new Point(lineColor, 5, 100, 100);
-    dot.newAnimation(100, 100, 200, 200);
+    dot = new Point(lineColor, 5, width / 2, height / 2);
+    dot.newAnimation(width / 2, height / 2, 500, 300, 1);
 }
 
 public void draw() {
     background(backgroundColor);
+
     dot.move();
     dot.display();
+
+    // switch(step) {
+    // case 0:
+    //     if(frameCount / frameRate >= 1) { // Wait 1 second
+    //         step++;
+    //     }
+    //     break;
+    // case 1:
+    //     if(frameCount / frameRate < 4) { // Wait 4 seconds
+    //         dot.blink();
+    //         dot.display();
+    //     } else {
+    //         step++;
+    //     }
+    //     break;
+    // }
 }
 class Animator {
     // Position
@@ -45,7 +63,7 @@ class Animator {
     float endY = 30;
 
     // Stroke
-    private float lineSize = 0;
+    protected float lineAnimSize = 0;
     float maxLineSize = 10;
 
     // Animation parameters
@@ -53,39 +71,40 @@ class Animator {
     float blinkingRate = 0.1f;
     private float amplitudeX;
     private float amplitudeY;
-    float speed = 0.04f;
+    private float frame;
+    private float speed = 0.04f;
+    private float duration;
 
-    public void newAnimation(float startX, float startY, float endX, float endY) {
+    public void newAnimation(float startX, float startY, float endX, float endY, float duration) {
         this.startX = startX;
         this.startY = startY;
         this.endX = endX;
         this.endY = endY;
         this.x = startX;
         this.y = startY;
-        amplitudeX = (endX - startX);
-        amplitudeY = (endY - startY);
+        amplitudeX = endX - startX;
+        amplitudeY = endY - startY;
+        this.duration = duration;
+        speed = duration / frameRate;
+        frame = 0;
     }
 
     /*
         A sigmoid animation (ease in - ease out) for x and y
     */
     public boolean anim() {
-        if (abs(endX - x) > 0.3f) {
-            x = arctan(frameCount, speed, amplitudeX) + startX;
+        if (frame / frameRate < duration) {
+            x = sigmoid(frame, speed, amplitudeX) + startX;
+            y = sigmoid(frame, speed, amplitudeY) + startY;
+            frame++;
+            return true;
         } else {
             return false;
         }
-
-        if (abs(endY - y) > 0.3f) {
-            y = arctan(frameCount, speed, amplitudeY) + startY;
-        } else {
-            return false;
-        }
-        return true;
     }
 
-    public void blink() {
-        lineSize = abs(sine(frameCount, blinkingRate, maxLineSize));
+    public void resize() {
+        lineAnimSize = abs(sine(frameCount, blinkingRate, maxLineSize));
     }
 
     private float sine(float time, float frequency, float amplitude) {
@@ -98,6 +117,10 @@ class Animator {
 
     private float arctan(float time, float frequency, float amplitude) {
         return atan(time * frequency) * amplitude;
+    }
+
+    private float sigmoid(float time, float frequency, float amplitude) {
+        return (amplitude - cosine(time, frequency, amplitude)) + 1;
     }
 
 }
@@ -123,6 +146,11 @@ abstract class Figure  extends Animator {
         return moving;
     }
 
+    public void blink() {
+        resize();
+        lineSize = lineAnimSize;
+    }
+
     public abstract void display();
 }
 class Point extends Figure {
@@ -134,6 +162,7 @@ class Point extends Figure {
     public void display() {
         pushMatrix();
         translate(locationX, locationY);
+        println(locationX);
         stroke(lineColor);
         strokeWeight(lineSize);
         point(0, 0);
