@@ -1,4 +1,4 @@
-class TranslationAnimation extends Animation {
+class TimedAnimation extends Animation {
     // Position
     float x;
     float y;
@@ -7,7 +7,15 @@ class TranslationAnimation extends Animation {
     private float endX;
     private float endY;
 
-    TranslationAnimation (float startX, float startY, float endX, float endY, float duration) {
+    TimedAnimation (float startX, float endX, float duration) {
+        init(startX, 0, endX, 0, duration);
+    }
+
+    TimedAnimation (float startX, float startY, float endX, float endY, float duration) {
+        init(startX, startY, endX, endY, duration);
+    }
+
+    void init(float startX, float startY, float endX, float endY, float duration) {
         this.startX = startX;
         this.startY = startY;
         this.endX = endX;
@@ -17,11 +25,11 @@ class TranslationAnimation extends Animation {
         amplitudeX = endX - startX;
         amplitudeY = endY - startY;
         this.duration = duration;
-        speed = duration / frameRate;
+        speed = 1 / (duration * frameRate);
         frame = 0;
     }
 
-    // A translation sigmoid animation (ease in - ease out) for x and y    
+    // A translation sigmoid animation (ease in - ease out) for x and y
     boolean anim() {
         if (frame / frameRate < duration) {
             x = sigmoid(frame, speed, amplitudeX) + startX;

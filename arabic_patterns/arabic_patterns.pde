@@ -5,23 +5,23 @@ float lineSize = 2;
 
 int step = 0;
 
-Point dot;
+Line dot;
 
 void setup() {
     size(640, 480);
     smooth();
     background(backgroundColor);
-    dot = new Point(lineColor, 5, width / 2, height / 2);
-    dot.newTranslation(new TranslationAnimation(width / 2, height / 2, 500, 300, 1));
-    dot.newBlink(new BlinkAnimation(10));
+    dot = new Line(lineColor, 3, width / 2, height / 2, 100, 0);
+    dot.newGrowth(new TimedAnimation(0, 1, 1));
+    dot.newRotation(new TimedAnimation(0, 180, 1));
 }
 
 void draw() {
     background(backgroundColor);
 
-    dot.move();
+    dot.turn();
+    dot.grow();
     dot.display();
-    dot.blink();
 
     // switch(step) {
     // case 0:

@@ -8,6 +8,8 @@ class Point extends Figure {
     void display() {
         pushMatrix();
         translate(locationX, locationY);
+        rotate(radians(angle));
+        scale(size);
         stroke(lineColor);
         strokeWeight(lineSize);
         point(0, 0);

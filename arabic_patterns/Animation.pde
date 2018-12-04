@@ -5,7 +5,7 @@ abstract class Animation {
     protected float amplitudeY;
     protected float frame;
     protected float speed;
-    protected float duration;
+    protected float duration; // In seconds
 
     protected float sine(float time, float frequency, float amplitude) {
         return sin(time * frequency) * amplitude;
