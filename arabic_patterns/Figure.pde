@@ -1,10 +1,10 @@
 abstract class Figure {
-    int lineColor;
-    float lineSize;
-    float locationX;
-    float locationY;
-    TranslationAnimation movement;
-    BlinkAnimation blinking;
+    protected int lineColor;
+    protected float lineSize;
+    protected float locationX;
+    protected float locationY;
+    private TranslationAnimation movement;
+    private BlinkAnimation blinking;
 
     Figure(int lineColor, float lineSize, float locationX, float locationY) {
         this.lineColor = lineColor;
@@ -23,6 +23,7 @@ abstract class Figure {
 
     // Call this every frame to move the figure
     boolean move() {
+        if (movement == null) return false;
         boolean moving = movement.anim();
         if (moving) {
             locationX = movement.x;
@@ -33,6 +34,7 @@ abstract class Figure {
 
     // Call this every frame to do a blink animation
     void blink() {
+        if (blinking == null) return;
         blinking.anim();
         lineSize = blinking.lineSize;
     }
