@@ -12,7 +12,8 @@ void setup() {
     smooth();
     background(backgroundColor);
     dot = new Point(lineColor, 5, width / 2, height / 2);
-    dot.newAnimation(width / 2, height / 2, 500, 300, 1);
+    dot.newTranslation(new TranslationAnimation(width / 2, height / 2, 500, 300, 1));
+    dot.newBlink(new BlinkAnimation(10));
 }
 
 void draw() {
@@ -20,6 +21,7 @@ void draw() {
 
     dot.move();
     dot.display();
+    dot.blink();
 
     // switch(step) {
     // case 0:

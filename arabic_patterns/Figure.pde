@@ -1,8 +1,10 @@
-abstract class Figure  extends Animator {
+abstract class Figure {
     int lineColor;
     float lineSize;
     float locationX;
     float locationY;
+    TranslationAnimation movement;
+    BlinkAnimation blinking;
 
     Figure(int lineColor, float lineSize, float locationX, float locationY) {
         this.lineColor = lineColor;
@@ -11,18 +13,28 @@ abstract class Figure  extends Animator {
         this.locationY = locationY;
     }
 
+    void newTranslation(TranslationAnimation anim) {
+        movement = anim;
+    }
+
+    void newBlink(BlinkAnimation anim) {
+        blinking = anim;
+    }
+
+    // Call this every frame to move the figure
     boolean move() {
-        boolean moving = anim();
+        boolean moving = movement.anim();
         if (moving) {
-            locationX = x;
-            locationY = y;
+            locationX = movement.x;
+            locationY = movement.y;
         }
         return moving;
     }
 
+    // Call this every frame to do a blink animation
     void blink() {
-        resize();
-        lineSize = lineAnimSize;
+        blinking.anim();
+        lineSize = blinking.lineSize;
     }
 
     abstract void display();

@@ -28,7 +28,8 @@ public void setup() {
     
     background(backgroundColor);
     dot = new Point(lineColor, 5, width / 2, height / 2);
-    dot.newAnimation(width / 2, height / 2, 500, 300, 1);
+    dot.newTranslation(new TranslationAnimation(width / 2, height / 2, 500, 300, 1));
+    dot.newBlink(new BlinkAnimation(10));
 }
 
 public void draw() {
@@ -36,6 +37,7 @@ public void draw() {
 
     dot.move();
     dot.display();
+    dot.blink();
 
     // switch(step) {
     // case 0:
@@ -53,61 +55,16 @@ public void draw() {
     //     break;
     // }
 }
-class Animator {
-    // Position
-    protected float x;
-    protected float y;
-    float startX = 100;
-    float startY = 100;
-    float endX = 300;
-    float endY = 30;
-
-    // Stroke
-    protected float lineAnimSize = 0;
-    float maxLineSize = 10;
-
+abstract class Animation {
     // Animation parameters
-    float easing = 0.12f;
-    float blinkingRate = 0.1f;
-    private float amplitudeX;
-    private float amplitudeY;
-    private float frame;
-    private float speed;
-    private float duration;
+    protected float easing = 0.12f;
+    protected float amplitudeX;
+    protected float amplitudeY;
+    protected float frame;
+    protected float speed;
+    protected float duration;
 
-    public void newAnimation(float startX, float startY, float endX, float endY, float duration) {
-        this.startX = startX;
-        this.startY = startY;
-        this.endX = endX;
-        this.endY = endY;
-        this.x = startX;
-        this.y = startY;
-        amplitudeX = endX - startX;
-        amplitudeY = endY - startY;
-        this.duration = duration;
-        speed = duration / frameRate;
-        frame = 0;
-    }
-
-    /*
-        A sigmoid animation (ease in - ease out) for x and y
-    */
-    public boolean anim() {
-        if (frame / frameRate < duration) {
-            x = sigmoid(frame, speed, amplitudeX) + startX;
-            y = sigmoid(frame, speed, amplitudeY) + startY;
-            frame++;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public void resize() {
-        lineAnimSize = abs(sine(frameCount, blinkingRate, maxLineSize));
-    }
-
-    private float sine(float time, float frequency, float amplitude) {
+    protected float sine(float time, float frequency, float amplitude) {
         return sin(time * frequency) * amplitude;
     }
 
@@ -119,16 +76,38 @@ class Animator {
         return atan(time * frequency) * amplitude;
     }
 
-    private float sigmoid(float time, float frequency, float amplitude) {
+    protected float sigmoid(float time, float frequency, float amplitude) {
         return (cosine(time + PI, frequency / 2, 1) + 1) * amplitude / 2;
     }
 
+    // Call every frame to animate, return false when animation is over (if it is timed)
+    public abstract boolean anim();
 }
-abstract class Figure  extends Animator {
+class BlinkAnimation extends Animation {
+    // Stroke
+    float lineSize;
+    private float maxLineSize;
+    private float blinkingRate = 0.1f;
+
+    BlinkAnimation (float maxLineSize) {
+        this.maxLineSize = maxLineSize;
+        this.duration = duration;
+        lineSize = 0;
+    }
+
+    // Blinks indefinitely
+    public boolean anim() {
+        lineSize = abs(sine(frameCount, blinkingRate, maxLineSize));
+        return true;
+    }
+}
+abstract class Figure {
     int lineColor;
     float lineSize;
     float locationX;
     float locationY;
+    TranslationAnimation movement;
+    BlinkAnimation blinking;
 
     Figure(int lineColor, float lineSize, float locationX, float locationY) {
         this.lineColor = lineColor;
@@ -137,21 +116,50 @@ abstract class Figure  extends Animator {
         this.locationY = locationY;
     }
 
+    public void newTranslation(TranslationAnimation anim) {
+        movement = anim;
+    }
+
+    public void newBlink(BlinkAnimation anim) {
+        blinking = anim;
+    }
+
+    // Call this every frame to move the figure
     public boolean move() {
-        boolean moving = anim();
+        boolean moving = movement.anim();
         if (moving) {
-            locationX = x;
-            locationY = y;
+            locationX = movement.x;
+            locationY = movement.y;
         }
         return moving;
     }
 
+    // Call this every frame to do a blink animation
     public void blink() {
-        resize();
-        lineSize = lineAnimSize;
+        blinking.anim();
+        lineSize = blinking.lineSize;
     }
 
     public abstract void display();
+}
+class Line extends Figure {
+
+    float length;
+
+    Line(int lineColor, float lineSize, float locationX, float locationY, float length) {
+        super(lineColor, lineSize, locationX,  locationY);
+        this.length = length;
+    }
+
+    // Call this every frame to display the line
+    public void display() {
+        pushMatrix();
+        translate(locationX, locationY);
+        stroke(lineColor);
+        strokeWeight(lineSize);
+        line(0, 0, length, 0);
+        popMatrix();
+    }
 }
 class Point extends Figure {
 
@@ -159,10 +167,10 @@ class Point extends Figure {
         super(lineColor, lineSize, locationX,  locationY);
     }
 
+    // Call this every frame to display the point
     public void display() {
         pushMatrix();
         translate(locationX, locationY);
-        println(locationX);
         stroke(lineColor);
         strokeWeight(lineSize);
         point(0, 0);
@@ -192,6 +200,7 @@ class Polygon {
         s.endShape(CLOSE);
     }
 
+    // Call this every frame to display the polygon
     public void display(float x, float y) {
         pushMatrix();
         translate(x, y);
@@ -229,11 +238,47 @@ class Star {
         s.endShape(CLOSE);
     }
 
+    // Call this every frame to display the star
     public void display(float x, float y) {
         pushMatrix();
         translate(x, y);
         shape(s);
         popMatrix();
+    }
+}
+class TranslationAnimation extends Animation {
+    // Position
+    float x;
+    float y;
+    private float startX;
+    private float startY;
+    private float endX;
+    private float endY;
+
+    TranslationAnimation (float startX, float startY, float endX, float endY, float duration) {
+        this.startX = startX;
+        this.startY = startY;
+        this.endX = endX;
+        this.endY = endY;
+        this.x = startX;
+        this.y = startY;
+        amplitudeX = endX - startX;
+        amplitudeY = endY - startY;
+        this.duration = duration;
+        speed = duration / frameRate;
+        frame = 0;
+    }
+
+    // A translation sigmoid animation (ease in - ease out) for x and y    
+    public boolean anim() {
+        if (frame / frameRate < duration) {
+            x = sigmoid(frame, speed, amplitudeX) + startX;
+            y = sigmoid(frame, speed, amplitudeY) + startY;
+            frame++;
+            return true;
+        } else {
+            return false;
+        }
     }
 }
   public void settings() {  size(640, 480);  smooth(); }

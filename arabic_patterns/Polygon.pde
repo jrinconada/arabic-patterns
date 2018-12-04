@@ -21,6 +21,7 @@ class Polygon {
         s.endShape(CLOSE);
     }
 
+    // Call this every frame to display the polygon
     void display(float x, float y) {
         pushMatrix();
         translate(x, y);
