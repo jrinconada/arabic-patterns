@@ -6,12 +6,14 @@ abstract class Figure {
     protected float locationY;
     protected float size;
     protected float angle; // In degrees
+    protected float howMuchPaint; // Percentage to finish (0 to 1)
 
     // Animations
     private TimedAnimation movement;
     private BlinkAnimation blinking;
-    protected TimedAnimation growth;
-    protected TimedAnimation rotation;
+    private TimedAnimation growth;
+    private TimedAnimation rotation;
+    private TimedAnimation painting;
 
     Figure(int lineColor, float lineSize, float locationX, float locationY) {
         this.lineColor = lineColor;
@@ -22,20 +24,25 @@ abstract class Figure {
         angle = 0;
     }
 
-    void newTranslation(TimedAnimation anim) {
-        movement = anim;
+    void newTranslation(float xFrom, float yFrom, float xTo, float yTo, float duration) {
+        movement = new TimedAnimation(xFrom, yFrom, xTo, yTo, duration);
     }
 
-    void newBlink(BlinkAnimation anim) {
-        blinking = anim;
+    void newBlink(float maxSize) {
+        blinking = new BlinkAnimation(maxSize);
     }
 
-    void newGrowth(TimedAnimation anim) {
-        growth = anim;
+    void newGrowth(float from, float to, float duration) {
+        growth = new TimedAnimation(from, to, duration);
     }
 
-    void newRotation(TimedAnimation anim) {
-        rotation = anim;
+    void newRotation(float from, float to, float duration) {
+        rotation = new TimedAnimation(from, to, duration);
+    }
+
+    // from and to a are percentages (0 - 100)
+    void newPainting(float from, float to, float duration) {
+        painting = new TimedAnimation(from / 100, to / 100, duration);
     }
 
     // Call this every frame to move the figure
@@ -74,6 +81,16 @@ abstract class Figure {
             angle = rotation.x;
         }
         return rotating;
+    }
+
+    // Call this every frame to do a painting animation
+    protected boolean paint() {
+        if (painting == null) return false;
+        boolean stillPainting = painting.anim();
+        if (stillPainting) {
+            howMuchPaint = painting.x;
+        }
+        return stillPainting;
     }
 
     abstract void display();

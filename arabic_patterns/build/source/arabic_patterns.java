@@ -21,23 +21,25 @@ float lineSize = 2;
 
 int step = 0;
 
-Line dot;
+Circle dot;
 
 public void setup() {
     
     
     background(backgroundColor);
-    dot = new Line(lineColor, 3, width / 2, height / 2, 100, 0);
-    dot.newGrowth(new TimedAnimation(0, 1, 1));
-    dot.newRotation(new TimedAnimation(0, 180, 1));
+    dot = new Circle(lineColor, 3, width / 2, height / 2, 100);
+    // dot.newGrowth(0, 1, 1);
+    // dot.newRotation(0, 180, 1);
+    dot.newPainting(0, 100, 2);
 }
 
 public void draw() {
     background(backgroundColor);
 
-    dot.turn();
-    dot.grow();
-    dot.display();
+    // dot.turn();
+    // dot.grow();
+    dot.paintIt();
+    // dot.display();
 
     // switch(step) {
     // case 0:
@@ -101,6 +103,38 @@ class BlinkAnimation extends Animation {
         return true;
     }
 }
+class Circle extends Figure {
+
+    float radius;
+
+    Circle(int lineColor, float lineSize, float locationX, float locationY, float radius) {
+        super(lineColor, lineSize, locationX,  locationY);
+        this.radius = radius;
+    }
+
+    // Call this every frame to display the circle
+    public void display() {
+        pushMatrix();
+        translate(locationX, locationY);
+        rotate(radians(angle));
+        stroke(lineColor);
+        noFill();
+        strokeWeight(lineSize);
+        ellipseMode(RADIUS);
+        ellipse(0, 0, radius, radius);
+        popMatrix();
+    }
+
+    // Call this every frame to paint the circle
+    public void paintIt() {
+        paint();
+        stroke(lineColor);
+        noFill();
+        strokeWeight(lineSize);
+        ellipseMode(RADIUS);
+        arc(locationX, locationY, radius, radius, 0, TWO_PI * howMuchPaint);
+    }
+}
 abstract class Figure {
     // Figure properties
     protected int lineColor;
@@ -109,12 +143,14 @@ abstract class Figure {
     protected float locationY;
     protected float size;
     protected float angle; // In degrees
+    protected float howMuchPaint; // Percentage to finish (0 to 1)
 
     // Animations
     private TimedAnimation movement;
     private BlinkAnimation blinking;
-    protected TimedAnimation growth;
-    protected TimedAnimation rotation;
+    private TimedAnimation growth;
+    private TimedAnimation rotation;
+    private TimedAnimation painting;
 
     Figure(int lineColor, float lineSize, float locationX, float locationY) {
         this.lineColor = lineColor;
@@ -125,20 +161,25 @@ abstract class Figure {
         angle = 0;
     }
 
-    public void newTranslation(TimedAnimation anim) {
-        movement = anim;
+    public void newTranslation(float xFrom, float yFrom, float xTo, float yTo, float duration) {
+        movement = new TimedAnimation(xFrom, yFrom, xTo, yTo, duration);
     }
 
-    public void newBlink(BlinkAnimation anim) {
-        blinking = anim;
+    public void newBlink(float maxSize) {
+        blinking = new BlinkAnimation(maxSize);
     }
 
-    public void newGrowth(TimedAnimation anim) {
-        growth = anim;
+    public void newGrowth(float from, float to, float duration) {
+        growth = new TimedAnimation(from, to, duration);
     }
 
-    public void newRotation(TimedAnimation anim) {
-        rotation = anim;
+    public void newRotation(float from, float to, float duration) {
+        rotation = new TimedAnimation(from, to, duration);
+    }
+
+    // from and to a are percentages (0 - 100)
+    public void newPainting(float from, float to, float duration) {
+        painting = new TimedAnimation(from / 100, to / 100, duration);
     }
 
     // Call this every frame to move the figure
@@ -177,6 +218,16 @@ abstract class Figure {
             angle = rotation.x;
         }
         return rotating;
+    }
+
+    // Call this every frame to do a painting animation
+    protected boolean paint() {
+        if (painting == null) return false;
+        boolean stillPainting = painting.anim();
+        if (stillPainting) {
+            howMuchPaint = painting.x;
+        }
+        return stillPainting;
     }
 
     public abstract void display();
