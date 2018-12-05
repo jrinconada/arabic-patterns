@@ -2,9 +2,10 @@ class Circle extends Figure {
 
     float radius;
 
-    Circle(int lineColor, float lineSize, float locationX, float locationY, float radius) {
+    Circle(int lineColor, float lineSize, float locationX, float locationY, float radius, float angle) {
         super(lineColor, lineSize, locationX,  locationY);
         this.radius = radius;
+        this.angle = angle;
     }
 
     // Call this every frame to display the circle
