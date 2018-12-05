@@ -17,7 +17,7 @@ class Circle extends Figure {
         noFill();
         strokeWeight(lineSize);
         ellipseMode(RADIUS);
-        ellipse(0, 0, radius, radius);
+        ellipse(0, 0, radius * size, radius * size);
         popMatrix();
     }
 

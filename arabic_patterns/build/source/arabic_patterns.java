@@ -21,25 +21,24 @@ float lineSize = 2;
 
 int step = 0;
 
-Circle dot;
+Rectangle dot;
 
 public void setup() {
     
     
     background(backgroundColor);
-    dot = new Circle(lineColor, 3, width / 2, height / 2, 100);
+    dot = new Rectangle(lineColor, 3, width / 2, height / 2, 100, 60, 0);
     // dot.newGrowth(0, 1, 1);
-    // dot.newRotation(0, 180, 1);
-    dot.newPainting(0, 100, 2);
+    dot.newRotation(0, 180, 1);
+    // dot.newPainting(0, 100, 2);
 }
 
 public void draw() {
     background(backgroundColor);
 
-    // dot.turn();
+    dot.turn();
     // dot.grow();
-    dot.paintIt();
-    // dot.display();
+    dot.display();
 
     // switch(step) {
     // case 0:
@@ -107,9 +106,10 @@ class Circle extends Figure {
 
     float radius;
 
-    Circle(int lineColor, float lineSize, float locationX, float locationY, float radius) {
+    Circle(int lineColor, float lineSize, float locationX, float locationY, float radius, float angle) {
         super(lineColor, lineSize, locationX,  locationY);
         this.radius = radius;
+        this.angle = angle;
     }
 
     // Call this every frame to display the circle
@@ -121,7 +121,7 @@ class Circle extends Figure {
         noFill();
         strokeWeight(lineSize);
         ellipseMode(RADIUS);
-        ellipse(0, 0, radius, radius);
+        ellipse(0, 0, radius * size, radius * size);
         popMatrix();
     }
 
@@ -299,6 +299,31 @@ class Polygon {
         pushMatrix();
         translate(x, y);
         shape(s);
+        popMatrix();
+    }
+}
+class Rectangle extends Figure {
+
+    float base;
+    float tall;
+
+    Rectangle(int lineColor, float lineSize, float locationX, float locationY, float base, float tall, float angle) {
+        super(lineColor, lineSize, locationX,  locationY);
+        this.base = base;
+        this.tall = tall;
+        this.angle = angle;
+    }
+
+    // Call this every frame to display the circle
+    public void display() {
+        pushMatrix();
+        translate(locationX, locationY);
+        rotate(radians(angle));
+        stroke(lineColor);
+        noFill();
+        strokeWeight(lineSize);
+        rectMode(RADIUS);
+        rect(0, 0, base * size, tall * size);
         popMatrix();
     }
 }

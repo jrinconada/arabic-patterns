@@ -5,25 +5,24 @@ float lineSize = 2;
 
 int step = 0;
 
-Circle dot;
+Rectangle dot;
 
 void setup() {
     size(640, 480);
     smooth();
     background(backgroundColor);
-    dot = new Circle(lineColor, 3, width / 2, height / 2, 100);
+    dot = new Rectangle(lineColor, 3, width / 2, height / 2, 100, 60, 0);
     // dot.newGrowth(0, 1, 1);
-    // dot.newRotation(0, 180, 1);
-    dot.newPainting(0, 100, 2);
+    dot.newRotation(0, 180, 1);
+    // dot.newPainting(0, 100, 2);
 }
 
 void draw() {
     background(backgroundColor);
 
-    // dot.turn();
+    dot.turn();
     // dot.grow();
-    dot.paintIt();
-    // dot.display();
+    dot.display();
 
     // switch(step) {
     // case 0:
