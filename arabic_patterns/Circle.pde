@@ -2,7 +2,7 @@ class Circle extends Figure {
 
     float radius;
 
-    Circle(int lineColor, float lineSize, float locationX, float locationY, float radius, float angle) {
+    Circle (int lineColor, float lineSize, float locationX, float locationY, float radius, float angle) {
         super(lineColor, lineSize, locationX,  locationY);
         this.radius = radius;
         this.angle = angle;
@@ -11,8 +11,11 @@ class Circle extends Figure {
     // Call this every frame to display the circle
     void display() {
         pushMatrix();
+        // Position
         translate(locationX, locationY);
+        // Rotation
         rotate(radians(angle));
+        // Drawing and scaling with size and radius
         stroke(lineColor);
         noFill();
         strokeWeight(lineSize);

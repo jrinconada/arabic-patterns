@@ -1,12 +1,20 @@
-class Polygon {
-    PShape s;
+class Polygon extends Figure {
 
-    Polygon(int lineColor, int sides, float radius) {
-        s = createShape();
+    int sides;
+    float radius;
+
+    Polygon (int lineColor, float lineSize, float locationX, float locationY, int sides, float radius, float angle) {
+        super(lineColor, lineSize, locationX,  locationY);
+        this.sides = sides;
+        this.radius = radius;
+    }
+
+    PShape create(int sides, float radius) {
+        PShape s = createShape();
         s.beginShape();
         s.noFill();
         s.stroke(lineColor);
-        s.strokeWeight(2);
+        s.strokeWeight(lineSize);
 
         // 360º / number of sides (in radians)
         float angle = TWO_PI / sides;
@@ -19,13 +27,18 @@ class Polygon {
         }
 
         s.endShape(CLOSE);
+        return s;
     }
 
     // Call this every frame to display the polygon
-    void display(float x, float y) {
+    void display() {
         pushMatrix();
-        translate(x, y);
-        shape(s);
+        // Position
+        translate(locationX, locationY);
+        // Rotation
+        rotate(radians(angle));
+        // Drawing and scaling with size and radius
+        shape(create(sides, radius * size));
         popMatrix();
     }
 }

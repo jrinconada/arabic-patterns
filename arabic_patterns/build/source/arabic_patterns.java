@@ -21,13 +21,14 @@ float lineSize = 2;
 
 int step = 0;
 
-Rectangle dot;
+Star dot;
 
 public void setup() {
     
     
     background(backgroundColor);
-    dot = new Rectangle(lineColor, 3, width / 2, height / 2, 100, 60, 0);
+    dot = new Star(lineColor, 2, width / 2, height / 2, 5, 60, 0);
+    // dot.newTranslation(width / 2, height / 2, 100 + width / 2, 100 + height / 2, 1);
     // dot.newGrowth(0, 1, 1);
     dot.newRotation(0, 180, 1);
     // dot.newPainting(0, 100, 2);
@@ -36,9 +37,11 @@ public void setup() {
 public void draw() {
     background(backgroundColor);
 
-    dot.turn();
+    // dot.move();
     // dot.grow();
+    dot.turn();
     dot.display();
+    // dot.paintIt();
 
     // switch(step) {
     // case 0:
@@ -106,7 +109,7 @@ class Circle extends Figure {
 
     float radius;
 
-    Circle(int lineColor, float lineSize, float locationX, float locationY, float radius, float angle) {
+    Circle (int lineColor, float lineSize, float locationX, float locationY, float radius, float angle) {
         super(lineColor, lineSize, locationX,  locationY);
         this.radius = radius;
         this.angle = angle;
@@ -115,8 +118,11 @@ class Circle extends Figure {
     // Call this every frame to display the circle
     public void display() {
         pushMatrix();
+        // Position
         translate(locationX, locationY);
+        // Rotation
         rotate(radians(angle));
+        // Drawing and scaling with size and radius
         stroke(lineColor);
         noFill();
         strokeWeight(lineSize);
@@ -152,7 +158,7 @@ abstract class Figure {
     private TimedAnimation rotation;
     private TimedAnimation painting;
 
-    Figure(int lineColor, float lineSize, float locationX, float locationY) {
+    Figure (int lineColor, float lineSize, float locationX, float locationY) {
         this.lineColor = lineColor;
         this.lineSize = lineSize;
         this.locationX = locationX;
@@ -245,8 +251,11 @@ class Line extends Figure {
     // Call this every frame to display the line
     public void display() {
         pushMatrix();
+        // Position
         translate(locationX, locationY);
+        // Rotation
         rotate(radians(angle));
+        // Drawing and scaling with size and length
         stroke(lineColor);
         strokeWeight(lineSize);
         line(0, 0, length * size, 0);
@@ -255,31 +264,43 @@ class Line extends Figure {
 }
 class Point extends Figure {
 
-    Point(int lineColor, float lineSize, float locationX, float locationY) {
+    Point (int lineColor, float lineSize, float locationX, float locationY) {
         super(lineColor, lineSize, locationX,  locationY);
     }
 
     // Call this every frame to display the point
     public void display() {
         pushMatrix();
+        // Position
         translate(locationX, locationY);
+        // Rotation
         rotate(radians(angle));
+        // Scale
         scale(size);
+        // Drawing
         stroke(lineColor);
         strokeWeight(lineSize);
         point(0, 0);
         popMatrix();
     }
 }
-class Polygon {
-    PShape s;
+class Polygon extends Figure {
 
-    Polygon(int lineColor, int sides, float radius) {
-        s = createShape();
+    int sides;
+    float radius;
+
+    Polygon (int lineColor, float lineSize, float locationX, float locationY, int sides, float radius, float angle) {
+        super(lineColor, lineSize, locationX,  locationY);
+        this.sides = sides;
+        this.radius = radius;
+    }
+
+    public PShape create(int sides, float radius) {
+        PShape s = createShape();
         s.beginShape();
         s.noFill();
         s.stroke(lineColor);
-        s.strokeWeight(2);
+        s.strokeWeight(lineSize);
 
         // 360º / number of sides (in radians)
         float angle = TWO_PI / sides;
@@ -292,13 +313,18 @@ class Polygon {
         }
 
         s.endShape(CLOSE);
+        return s;
     }
 
     // Call this every frame to display the polygon
-    public void display(float x, float y) {
+    public void display() {
         pushMatrix();
-        translate(x, y);
-        shape(s);
+        // Position
+        translate(locationX, locationY);
+        // Rotation
+        rotate(radians(angle));
+        // Drawing and scaling with size and radius
+        shape(create(sides, radius * size));
         popMatrix();
     }
 }
@@ -307,7 +333,7 @@ class Rectangle extends Figure {
     float base;
     float tall;
 
-    Rectangle(int lineColor, float lineSize, float locationX, float locationY, float base, float tall, float angle) {
+    Rectangle (int lineColor, float lineSize, float locationX, float locationY, float base, float tall, float angle) {
         super(lineColor, lineSize, locationX,  locationY);
         this.base = base;
         this.tall = tall;
@@ -317,8 +343,11 @@ class Rectangle extends Figure {
     // Call this every frame to display the circle
     public void display() {
         pushMatrix();
+        // Position
         translate(locationX, locationY);
+        // Rotation
         rotate(radians(angle));
+        // Drawing and scaling with size, base and tall
         stroke(lineColor);
         noFill();
         strokeWeight(lineSize);
@@ -327,15 +356,23 @@ class Rectangle extends Figure {
         popMatrix();
     }
 }
-class Star {
-    PShape s;
+class Star extends Figure {
 
-    Star(int lineColor, int points, float radius) {
-        s = createShape();
+    int points;
+    float radius;
+
+    Star (int lineColor, float lineSize, float locationX, float locationY, int points, float radius, float angle) {
+        super(lineColor, lineSize, locationX,  locationY);
+        this.points = points;
+        this.radius = radius;
+    }
+
+    public PShape create(int points, float radius) {
+        PShape s = createShape();
         s.beginShape();
         s.noFill();
         s.stroke(lineColor);
-        s.strokeWeight(2);
+        s.strokeWeight(lineSize);
 
         // 360º / 2 * number of sides (in radians)
         float angle = TWO_PI / (2 * points); // Ex: 360 / 2*8 = 22.5º
@@ -355,13 +392,18 @@ class Star {
         }
 
         s.endShape(CLOSE);
+        return s;
     }
 
     // Call this every frame to display the star
-    public void display(float x, float y) {
+    public void display() {
         pushMatrix();
-        translate(x, y);
-        shape(s);
+        // Position
+        translate(locationX, locationY);
+        // Rotation
+        rotate(radians(angle));
+        // Drawing and scaling with size and radius
+        shape(create(points, radius * size));
         popMatrix();
     }
 }

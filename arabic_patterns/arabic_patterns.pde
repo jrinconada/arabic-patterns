@@ -5,13 +5,14 @@ float lineSize = 2;
 
 int step = 0;
 
-Rectangle dot;
+Star dot;
 
 void setup() {
     size(640, 480);
     smooth();
     background(backgroundColor);
-    dot = new Rectangle(lineColor, 3, width / 2, height / 2, 100, 60, 0);
+    dot = new Star(lineColor, 2, width / 2, height / 2, 5, 60, 0);
+    // dot.newTranslation(width / 2, height / 2, 100 + width / 2, 100 + height / 2, 1);
     // dot.newGrowth(0, 1, 1);
     dot.newRotation(0, 180, 1);
     // dot.newPainting(0, 100, 2);
@@ -20,9 +21,11 @@ void setup() {
 void draw() {
     background(backgroundColor);
 
-    dot.turn();
+    // dot.move();
     // dot.grow();
+    dot.turn();
     dot.display();
+    // dot.paintIt();
 
     // switch(step) {
     // case 0:

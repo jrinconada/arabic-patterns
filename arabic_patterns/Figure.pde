@@ -15,7 +15,7 @@ abstract class Figure {
     private TimedAnimation rotation;
     private TimedAnimation painting;
 
-    Figure(int lineColor, float lineSize, float locationX, float locationY) {
+    Figure (int lineColor, float lineSize, float locationX, float locationY) {
         this.lineColor = lineColor;
         this.lineSize = lineSize;
         this.locationX = locationX;
