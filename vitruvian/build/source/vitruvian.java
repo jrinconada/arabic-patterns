@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream; 
 import java.io.IOException; 
 
-public class arabic_patterns extends PApplet {
+public class vitruvian extends PApplet {
 
 
 int backgroundColor = 50;
@@ -452,7 +452,7 @@ class TimedAnimation extends Animation {
 }
   public void settings() {  size(640, 480);  smooth(); }
   static public void main(String[] passedArgs) {
-    String[] appletArgs = new String[] { "arabic_patterns" };
+    String[] appletArgs = new String[] { "vitruvian" };
     if (passedArgs != null) {
       PApplet.main(concat(appletArgs, passedArgs));
     } else {
