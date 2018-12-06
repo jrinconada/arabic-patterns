@@ -84,7 +84,7 @@ abstract class Figure {
     }
 
     // Call this every frame to do a painting animation
-    protected boolean paint() {
+    protected boolean draw() {
         if (painting == null) return false;
         boolean stillPainting = painting.anim();
         if (stillPainting) {

@@ -25,12 +25,18 @@ class Circle extends Figure {
     }
 
     // Call this every frame to paint the circle
-    void paintIt() {
-        paint();
+    void paint() {
+        draw();
+        pushMatrix();
+        // Position
+        translate(locationX, locationY);
+        // Rotation
+        rotate(radians(angle));
         stroke(lineColor);
         noFill();
         strokeWeight(lineSize);
         ellipseMode(RADIUS);
-        arc(locationX, locationY, radius, radius, 0, TWO_PI * howMuchPaint);
+        arc(0, 0, radius, radius, 0, TWO_PI * howMuchPaint);
+        popMatrix();
     }
 }

@@ -27,8 +27,9 @@ class Rectangle extends Figure {
     }
 
     // Call this every frame to paint the square
-    void paintIt() {
-        paint();
+    void paint() {
+        draw();
+        pushMatrix();
         // Position
         translate(locationX - base / 2, locationY - tall / 2);
         // Rotation
@@ -40,5 +41,6 @@ class Rectangle extends Figure {
         line(base, tall, base - howMuchPaint * base, tall); // Bottom
         line(base, 0, base, howMuchPaint * tall); // Right
         line(0, tall, 0, tall - howMuchPaint * tall); // Left
+        popMatrix();
     }
 }
