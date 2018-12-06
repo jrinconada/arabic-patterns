@@ -14,50 +14,78 @@ import java.io.IOException;
 
 public class vitruvian extends PApplet {
 
+PImage img;
 
-int backgroundColor = 50;
-int lineColor = 200;
-float lineSize = 2;
+int lineColor = 0xff265074;
+float lineSize = 5;
 
 int step = 0;
 
-Star dot;
+Line bottom;
+Line top;
+Line right;
+Line left;
+Rectangle square;
 
 public void setup() {
+     // 1300, 1300 for the final result
     
-    
-    background(backgroundColor);
-    dot = new Star(lineColor, 2, width / 2, height / 2, 5, 60, 0);
+    // Image
+    img = loadImage("vitruvian-man.jpg");
+    img.resize(width, height);
+    background(img);
+
+    // Lines
+    bottom = new Line(lineColor, lineSize, 64, height - 7, width - 125, -0.4f);
+    top = new Line(lineColor, lineSize, width - 67, 121, width - 131, -180.4f);
+    right = new Line(lineColor, lineSize, width - 61, height - 13, width - 135, 269.6f);
+    left = new Line(lineColor, lineSize, 65, 126, width - 131, 90);
+    bottom.newGrowth(0, 1, 2);
+    top.newGrowth(0, 1, 2);
+    right.newGrowth(0, 1, 2);
+    left.newGrowth(0, 1, 2);
+
+    // Square
+    square = new Rectangle(lineColor, lineSize, width / 2, height / 2 + 59, width - 128, height - 131, -0.6f);
+
+    // EXAMPLES
     // dot.newTranslation(width / 2, height / 2, 100 + width / 2, 100 + height / 2, 1);
     // dot.newGrowth(0, 1, 1);
-    dot.newRotation(0, 180, 1);
-    // dot.newPainting(0, 100, 2);
+    // dot.newRotation(0, 180, 1);
+    square.newPainting(0, 100, 2);
 }
 
 public void draw() {
-    background(backgroundColor);
+    background(img);
 
+    // EXAMPLES
     // dot.move();
     // dot.grow();
-    dot.turn();
-    dot.display();
+    // dot.turn();
+    // dot.display();
     // dot.paintIt();
 
-    // switch(step) {
-    // case 0:
-    //     if(frameCount / frameRate >= 1) { // Wait 1 second
-    //         step++;
-    //     }
-    //     break;
-    // case 1:
-    //     if(frameCount / frameRate < 4) { // Wait 4 seconds
-    //         dot.blink();
-    //         dot.display();
-    //     } else {
-    //         step++;
-    //     }
-    //     break;
-    // }
+    switch(step) {
+    case 0:
+        // bottom.grow();
+        // bottom.display();
+        // top.grow();
+        // top.display();
+        // right.grow();
+        // right.display();
+        // left.grow();
+        // left.display();
+        square.paintIt();
+        if(frameCount / frameRate > 2) step++; // 1 second
+        break;
+    case 1:
+        // bottom.display();
+        // top.display();
+        // right.display();
+        // left.display();
+        square.display();
+        break;
+    }
 }
 abstract class Animation {
     // Animation parameters
@@ -352,8 +380,24 @@ class Rectangle extends Figure {
         noFill();
         strokeWeight(lineSize);
         rectMode(RADIUS);
-        rect(0, 0, base * size, tall * size);
+        rect(0, 0, (base / 2) * size, (tall / 2) * size);
         popMatrix();
+    }
+
+    // Call this every frame to paint the square
+    public void paintIt() {
+        paint();
+        // Position
+        translate(locationX - base / 2, locationY - tall / 2);
+        // Rotation
+        rotate(radians(angle));
+        stroke(lineColor);
+        noFill();
+        strokeWeight(lineSize);
+        line(0, 0, howMuchPaint * base, 0); // Top
+        line(base, tall, base - howMuchPaint * base, tall); // Bottom
+        line(base, 0, base, howMuchPaint * tall); // Right
+        line(0, tall, 0, tall - howMuchPaint * tall); // Left
     }
 }
 class Star extends Figure {
@@ -450,7 +494,7 @@ class TimedAnimation extends Animation {
         }
     }
 }
-  public void settings() {  size(640, 480);  smooth(); }
+  public void settings() {  size(700, 700);  smooth(); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "vitruvian" };
     if (passedArgs != null) {

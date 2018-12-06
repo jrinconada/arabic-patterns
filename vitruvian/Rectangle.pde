@@ -22,7 +22,23 @@ class Rectangle extends Figure {
         noFill();
         strokeWeight(lineSize);
         rectMode(RADIUS);
-        rect(0, 0, base * size, tall * size);
+        rect(0, 0, (base / 2) * size, (tall / 2) * size);
         popMatrix();
+    }
+
+    // Call this every frame to paint the square
+    void paintIt() {
+        paint();
+        // Position
+        translate(locationX - base / 2, locationY - tall / 2);
+        // Rotation
+        rotate(radians(angle));
+        stroke(lineColor);
+        noFill();
+        strokeWeight(lineSize);
+        line(0, 0, howMuchPaint * base, 0); // Top
+        line(base, tall, base - howMuchPaint * base, tall); // Bottom
+        line(base, 0, base, howMuchPaint * tall); // Right
+        line(0, tall, 0, tall - howMuchPaint * tall); // Left
     }
 }
