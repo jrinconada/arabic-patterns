@@ -15,13 +15,28 @@ import java.io.IOException;
 public class vitruvian extends PApplet {
 
 PImage img;
-
-int squareColor = 0xff265074;
-int circleColor = 0xffB60E0E;
-float lineSize = 5;
-
 int step = 0;
 
+// Colors
+int regularColor = 60;
+int squareColor = 0xff265074;
+int circleColor = 0xffB60E0E;
+int phiColor = 0xff40B611;
+// Sizes
+float lineSize = 5;
+int regularTextSize = 60;
+int largeTextSize = 90;
+// Square dimensions
+float squareX;
+float squareY;
+float squareWidth;
+float squareHeight;
+// Circle dimensions
+float circleX;
+float circleY;
+float circleRadius;
+
+// Figures
 Line bottom;
 Line top;
 Line right;
@@ -33,16 +48,23 @@ Circle circle;
 public void setup() {
      // 1299, 1294 for the final result
     
+
     // Image
     img = loadImage("vitruvian-man.jpg");
     img.resize(width, height);
     background(img);
 
+    // Text
+    PFont font = createFont("Cambria Math", 32);
+    // String[] fontList = PFont.list();
+    // printArray(fontList);
+    textFont(font);
+
     // Square
-    float squareX = width / 2;
-    float squareY = height / 2 + 59;
-    float squareWidth = width - 127;
-    float squareHeight = height - 135;
+    squareX = width / 2;
+    squareY = height / 2 + 59;
+    squareWidth = width - 127;
+    squareHeight = height - 135;
     square = new Rectangle(squareColor, lineSize, squareX, squareY, squareWidth, squareHeight, 0);
     square.newPainting(0, 100, 2);
     square.newBlink(8);
@@ -58,9 +80,9 @@ public void setup() {
     left.newGrowth(0, 1, 2);
 
     // Circle
-    float circleX = width / 2;
-    float circleY = height / 2 - 2;
-    float circleRadius = (width - 10) / 2;
+    circleX = width / 2;
+    circleY = height / 2 - 2;
+    circleRadius = (width - 10) / 2;
     circle = new Circle(circleColor, lineSize, circleX, circleY, circleRadius, 0);
     circle.newPainting(0, 100, 2);
 
@@ -88,11 +110,11 @@ public void draw() {
     // dot.paint();
 
     switch(step) {
-    case 0:
+    case 0: // Square appears
         square.paint();
         if(frameCount / frameRate > 2) step++; // second 2
         break;
-    case 1:
+    case 1: // Lines to the center
         square.display();
         bottom.grow();
         bottom.display();
@@ -104,7 +126,7 @@ public void draw() {
         left.display();
         if(frameCount / frameRate > 4) step++; // second 4
         break;
-    case 2:
+    case 2: // Square and lines stay
         square.display();
         bottom.display();
         top.display();
@@ -112,37 +134,53 @@ public void draw() {
         left.display();
         if(frameCount / frameRate > 6) step++; // second 6
         break;
-    case 3:
+    case 3: // Radius appears
         radius.grow();
         radius.display();
         if(frameCount / frameRate > 8) step++; // second 8
         break;
-    case 4:
+    case 4: // Circle appears
         radius.turn();
         radius.display();
         circle.paint();
         if(frameCount / frameRate > 10) step++; // second 10
         break;
-    case 5:
+    case 5: // Circle and radius stay
         radius.turn();
         radius.display();
         circle.display();
         if(frameCount / frameRate > 12) step++; // second 12
         break;
-    case 6:
+    case 6: // Radius blinks
         radius.display();
         radius.blink();
         circle.display();
-        if(frameCount / frameRate > 14) step++; // second 14
-        break;
-    case 7:        
-        radius.display();
-        circle.display();
-        square.blink();
-        square.display();
-        if(frameCount / frameRate > 16) step++; // second 14
+        drawText("R", circleX + circleRadius / 2 - 20, circleY - 10, circleColor);
+        if(frameCount / frameRate > 14) { // Square blinks (second 14)
+            square.blink();
+            square.display();
+            drawText("L", squareX - 20, squareY - squareHeight / 2 - 10, squareColor);
+        }
+        // Phi formula:
+        if(frameCount / frameRate > 16) drawText("R", width / 5, height * 3/5, circleColor); // R (second 16)
+        if(frameCount / frameRate > 17) drawText("⎯", width / 5 - 4, height * 3/5 + regularTextSize / 2 + 6, regularColor, largeTextSize); // - (second 17)
+        if(frameCount / frameRate > 18) drawText("L", width / 5, height * 3/5 + regularTextSize, squareColor); // L (second 18)
+        if(frameCount / frameRate > 19) drawText("=", width / 5 + 48, height * 3/5 + 28, regularColor); // = (second 19)
+        if(frameCount / frameRate > 20) drawText("\u03C6", width / 5 + 97, height * 3/5 + 20, phiColor); // Phi (second 20)
         break;
     }
+}
+
+public void drawText(String t, float x, float y, int textColor, int s) {
+    textSize(s);
+    fill(textColor);
+    text(t, x, y);
+}
+
+public void drawText(String t, float x, float y, int textColor) {
+    textSize(regularTextSize);
+    fill(textColor);
+    text(t, x, y);
 }
 abstract class Animation {
     // Animation parameters
