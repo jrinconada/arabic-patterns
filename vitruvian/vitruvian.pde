@@ -28,6 +28,7 @@ Line left;
 Rectangle square;
 Line radius;
 Circle circle;
+Proportion p8;
 
 void setup() {
     size(700, 700); // 1299, 1294 for the final result
@@ -76,6 +77,9 @@ void setup() {
     radius.newRotation(0, 360, 2);
     radius.newBlink(8);
 
+    // Proportions
+    p8 = new Proportion(squareColor, lineSize, 40, squareY - squareHeight / 2, squareHeight, 8);
+
     // EXAMPLES
     // dot.newTranslation(width / 2, height / 2, 100 + width / 2, 100 + height / 2, 1);
     // dot.newGrowth(0, 1, 1);
@@ -92,6 +96,8 @@ void draw() {
     // dot.turn();
     // dot.display();
     // dot.paint();
+
+    p8.display();
 
     switch(step) {
     case 0: // Square appears
