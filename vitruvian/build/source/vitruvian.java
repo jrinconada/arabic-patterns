@@ -44,7 +44,13 @@ Line left;
 Rectangle square;
 Line radius;
 Circle circle;
-Proportion p8;
+
+// Proportions
+Proportion fingers4;
+Proportion fingers16;
+Proportion fingers24;
+Proportion fingers96;
+Proportion heads8;
 
 public void setup() {
      // 1299, 1294 for the final result
@@ -94,8 +100,10 @@ public void setup() {
     radius.newBlink(8);
 
     // Proportions
-    p8 = new Proportion(squareColor, lineSize, 40, squareY - squareHeight / 2, squareHeight, 8);
-    p8.newPainting(0, 8, 2);
+    fingers4 = new Proportion(squareColor, lineSize - 1, width - 95, 210, squareHeight / 24, 4);
+    fingers4.newPainting(0, fingers4.lines.size(), 2);
+    heads8 = new Proportion(squareColor, lineSize, 40, squareY - squareHeight / 2, squareHeight, 8);
+    heads8.newPainting(0, 8, 2);
 
     // EXAMPLES
     // dot.newTranslation(width / 2, height / 2, 100 + width / 2, 100 + height / 2, 1);
@@ -114,7 +122,8 @@ public void draw() {
     // dot.display();
     // dot.paint();
 
-    // p8.paint();
+    fingers4.paint();
+    heads8.paint();
 
     switch(step) {
     case 0: // Square appears
