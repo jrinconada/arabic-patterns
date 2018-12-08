@@ -11,11 +11,11 @@ abstract class Animation {
         return sin(time * frequency) * amplitude;
     }
 
-    private float cosine(float time, float frequency, float amplitude) {
+    protected float cosine(float time, float frequency, float amplitude) {
         return cos(time * frequency + PI) * amplitude;
     }
 
-    private float arctan(float time, float frequency, float amplitude) {
+    protected float arctan(float time, float frequency, float amplitude) {
         return atan(time * frequency) * amplitude;
     }
 

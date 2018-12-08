@@ -79,6 +79,7 @@ void setup() {
 
     // Proportions
     p8 = new Proportion(squareColor, lineSize, 40, squareY - squareHeight / 2, squareHeight, 8);
+    p8.newPainting(0, 8, 2);
 
     // EXAMPLES
     // dot.newTranslation(width / 2, height / 2, 100 + width / 2, 100 + height / 2, 1);
@@ -97,7 +98,7 @@ void draw() {
     // dot.display();
     // dot.paint();
 
-    p8.display();
+    // p8.paint();
 
     switch(step) {
     case 0: // Square appears

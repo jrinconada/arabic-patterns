@@ -95,6 +95,7 @@ public void setup() {
 
     // Proportions
     p8 = new Proportion(squareColor, lineSize, 40, squareY - squareHeight / 2, squareHeight, 8);
+    p8.newPainting(0, 8, 2);
 
     // EXAMPLES
     // dot.newTranslation(width / 2, height / 2, 100 + width / 2, 100 + height / 2, 1);
@@ -113,7 +114,7 @@ public void draw() {
     // dot.display();
     // dot.paint();
 
-    p8.display();
+    // p8.paint();
 
     switch(step) {
     case 0: // Square appears
@@ -201,11 +202,11 @@ abstract class Animation {
         return sin(time * frequency) * amplitude;
     }
 
-    private float cosine(float time, float frequency, float amplitude) {
+    protected float cosine(float time, float frequency, float amplitude) {
         return cos(time * frequency + PI) * amplitude;
     }
 
-    private float arctan(float time, float frequency, float amplitude) {
+    protected float arctan(float time, float frequency, float amplitude) {
         return atan(time * frequency) * amplitude;
     }
 
@@ -274,6 +275,33 @@ class Circle extends Figure {
         ellipseMode(RADIUS);
         arc(0, 0, radius, radius, 0, TWO_PI * howMuchPaint);
         popMatrix();
+    }
+}
+class DiscreteAnimation extends Animation {
+    // Position
+    int x;
+    private float start;
+    private float end;
+
+    DiscreteAnimation (float start, float end, float duration) {
+        this.start = start;
+        this.end = end;
+        this.x = round(start);
+        amplitudeX = end - start;
+        this.duration = duration;
+        speed = 1 / (duration * frameRate);
+        frame = 0;
+    }
+
+    // A sigmoid animation (ease in - ease out) for x and y
+    public boolean anim() {
+        if (frame / frameRate < duration) {
+            x = round(sigmoid(frame, speed, amplitudeX) + start);
+            frame++;
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 abstract class Figure {
@@ -469,19 +497,35 @@ class Proportion {
     final float gap = 7;
     float fullHeight;
 
+    private DiscreteAnimation painting;
+
     Proportion(int lineColor, float lineSize, float locationX, float locationY, float fullHeight, int parts) {
         lines = new ArrayList();
         float length = fullHeight / parts - gap;
         for (int i = 0; i < parts; i++) {
-            println(locationY * i * (length + gap));
             lines.add(new Line(lineColor, lineSize, locationX, gap + locationY + (i * (length + gap)), length, 90));
         }
+    }
+
+    public void newPainting(float from, float to, float duration) {
+        painting = new DiscreteAnimation(from, to, duration);
     }
 
     public void display() {
         for (Line l : lines) {
             l.display();
         }
+    }
+
+    protected boolean paint() {
+        if (painting == null) return false;
+        boolean stillPainting = painting.anim();
+        if (stillPainting) {
+            for (int i = 0; i < painting.x; i++) {
+                lines.get(i).display();
+            }
+        }
+        return stillPainting;
     }
 
 }
@@ -613,7 +657,7 @@ class TimedAnimation extends Animation {
         frame = 0;
     }
 
-    // A translation sigmoid animation (ease in - ease out) for x and y
+    // A sigmoid animation (ease in - ease out) for x and y
     public boolean anim() {
         if (frame / frameRate < duration) {
             x = sigmoid(frame, speed, amplitudeX) + startX;

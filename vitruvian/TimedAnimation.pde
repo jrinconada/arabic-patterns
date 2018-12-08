@@ -29,7 +29,7 @@ class TimedAnimation extends Animation {
         frame = 0;
     }
 
-    // A translation sigmoid animation (ease in - ease out) for x and y
+    // A sigmoid animation (ease in - ease out) for x and y
     boolean anim() {
         if (frame / frameRate < duration) {
             x = sigmoid(frame, speed, amplitudeX) + startX;
