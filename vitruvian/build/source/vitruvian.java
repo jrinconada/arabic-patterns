@@ -122,8 +122,8 @@ public void draw() {
     // dot.display();
     // dot.paint();
 
-    fingers4.paint();
-    heads8.paint();
+    // fingers4.paint();
+    // heads8.paint();
 
     switch(step) {
     case 0: // Square appears
@@ -178,9 +178,9 @@ public void draw() {
             drawText("L", squareX - 20, squareY - squareHeight / 2 - 10, squareColor);
         }
         // Phi formula:
-        if(frameCount / frameRate > 16) drawText("R", width / 5, height * 3/5, circleColor); // R (second 16)
+        if(frameCount / frameRate > 16) drawText("L", width / 5, height * 3/5, squareColor); // L (second 16)
         if(frameCount / frameRate > 17) drawText("⎯", width / 5 - 4, height * 3/5 + regularTextSize / 2 + 6, regularColor, largeTextSize); // - (second 17)
-        if(frameCount / frameRate > 18) drawText("L", width / 5, height * 3/5 + regularTextSize, squareColor); // L (second 18)
+        if(frameCount / frameRate > 18) drawText("R", width / 5, height * 3/5 + regularTextSize, circleColor); // R (second 18)
         if(frameCount / frameRate > 19) drawText("=", width / 5 + 48, height * 3/5 + 28, regularColor); // = (second 19)
         if(frameCount / frameRate > 20) drawText("\u03C6", width / 5 + 97, height * 3/5 + 20, phiColor); // Phi (second 20)
         break;
